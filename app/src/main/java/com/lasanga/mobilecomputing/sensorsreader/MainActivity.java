@@ -18,9 +18,11 @@ public class MainActivity extends Activity implements SensorEventListener{
     private Button btnStart;
     private TextView accelX,accelY,accelZ;
     private TextView magnoX,magnoY,magnoZ;
+    private TextView gyroX,gyroY,gyroZ;
+    private TextView light,proximity;
 
     private SensorManager sensorManager;
-    Sensor accelerometer, magnetometer;
+    Sensor accelerometer, magnetometer, gyroscope, lightSensor, proximitySensor;
 
     boolean updateStarted;
 
@@ -42,6 +44,14 @@ public class MainActivity extends Activity implements SensorEventListener{
         magnoX = (TextView) findViewById(R.id.magnoX);
         magnoY = (TextView) findViewById(R.id.magnoY);
         magnoZ = (TextView) findViewById(R.id.magnoZ);
+
+        gyroX = (TextView) findViewById(R.id.gyroX);
+        gyroY = (TextView) findViewById(R.id.gyroY);
+        gyroZ = (TextView) findViewById(R.id.gyroZ);
+
+
+        light = (TextView) findViewById(R.id.light);
+        proximity = (TextView) findViewById(R.id.proximity);
 
 
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -70,9 +80,9 @@ public class MainActivity extends Activity implements SensorEventListener{
 
         }
         else {
-            accelX.setText("accelerometer not supported");
-            accelY.setText("accelerometer not supported");
-            accelZ.setText("accelerometer not supported");
+            accelX.setText("not supported");
+            accelY.setText("");
+            accelZ.setText("");
 
         }
 
@@ -83,10 +93,42 @@ public class MainActivity extends Activity implements SensorEventListener{
 
         }
         else {
-            magnoX.setText("magnetometer not supported");
-            magnoY.setText("magnetometer not supported");
-            magnoZ.setText("magnetometer not supported");
+            magnoX.setText("not supported");
+            magnoY.setText("");
+            magnoZ.setText("");
 
+        }
+
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+        if(gyroscope != null) {
+            sensorManager.registerListener(MainActivity.this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
+        else {
+            gyroX.setText("not supported");
+            gyroY.setText("");
+            gyroZ.setText("");
+        }
+
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        if(lightSensor != null) {
+            sensorManager.registerListener(MainActivity.this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
+        else {
+            light.setText("not supported");
+        }
+
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        if(proximitySensor != null) {
+            sensorManager.registerListener(MainActivity.this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
+        else {
+            proximity.setText("not supported");
         }
     }
 
@@ -103,6 +145,17 @@ public class MainActivity extends Activity implements SensorEventListener{
                 magnoX.setText("X: " + event.values[0]);
                 magnoY.setText("Y: " + event.values[1]);
                 magnoZ.setText("Z: " + event.values[2]);
+            }
+            else if(sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+                gyroX.setText("X: " + event.values[0]);
+                gyroY.setText("Y: " + event.values[1]);
+                gyroZ.setText("Z: " + event.values[2]);
+            }
+            else if(sensor.getType() == Sensor.TYPE_LIGHT) {
+                light.setText(""+event.values[0]);
+            }
+            else if(sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                proximity.setText(""+event.values[0]);
             }
         }
     }
